@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.view.Window;
 import android.view.WindowManager;
 import android.webkit.JavascriptInterface;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -35,11 +37,17 @@ public class MainActivity extends Activity {
         s.setJavaScriptEnabled(true);
         s.setDomStorageEnabled(true);          // localStorage: aquí viven tus entrenos
         s.setDatabaseEnabled(true);
-        s.setAllowFileAccess(true);
+        // Solo puede leer sus propios archivos (assets). Nada del resto del móvil.
+        s.setAllowFileAccess(false);
+        s.setAllowContentAccess(false);
+        s.setAllowFileAccessFromFileURLs(false);
+        s.setAllowUniversalAccessFromFileURLs(false);
+        s.setGeolocationEnabled(false);
+        s.setSaveFormData(false);
         s.setMediaPlaybackRequiresUserGesture(false);
         s.setTextZoom(100);                    // que el tamaño de letra del sistema no rompa el diseño
 
-        web.setWebViewClient(new WebViewClient());
+        web.setWebViewClient(new LockedClient());
         web.setWebChromeClient(new WebChromeClient());
         web.addJavascriptInterface(new Bridge(), "HierroAndroid");
 
@@ -47,6 +55,23 @@ public class MainActivity extends Activity {
             web.restoreState(savedInstanceState);
         } else {
             web.loadUrl("file:///android_asset/index.html");
+        }
+    }
+
+    private static final String HOME = "file:///android_asset/";
+
+    /** La app solo puede abrir y cargar sus propios archivos: cualquier otra dirección se bloquea. */
+    private static class LockedClient extends WebViewClient {
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+            return !request.getUrl().toString().startsWith(HOME);
+        }
+
+        @Override
+        public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
+            String url = request.getUrl().toString();
+            if (url.startsWith(HOME) || url.startsWith("data:") || url.startsWith("blob:")) return null;
+            return new WebResourceResponse("text/plain", "utf-8", new java.io.ByteArrayInputStream(new byte[0]));
         }
     }
 

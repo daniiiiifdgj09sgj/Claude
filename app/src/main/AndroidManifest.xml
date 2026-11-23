@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- Fuentes de Google Fonts (si no hay conexión usa fuentes del sistema) -->
-    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Sin permiso de internet: la app no puede conectarse a nada. Las fuentes van incluidas. -->
     <!-- Vibración al terminar el descanso y al batir un récord -->
     <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
         android:allowBackup="true"
+        android:usesCleartextTraffic="false"
         android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher"
         android:label="Hierro"

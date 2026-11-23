@@ -17,21 +17,19 @@ android {
     }
 
     signingConfigs {
-        // Clave fija: así cada APK nuevo se instala encima del anterior sin borrar tus datos
+        // La clave NO está en el repo: GitHub Actions la crea desde el secreto HIERRO_KEYSTORE
         hierro {
-            storeFile rootProject.file('keystore/hierro.keystore')
-            storePassword 'hierro123'
+            storeFile file(System.getenv('HIERRO_KEYSTORE_FILE') ?: 'no-existe.p12')
+            storeType 'pkcs12'
+            storePassword System.getenv('HIERRO_KEYSTORE_PASSWORD') ?: ''
             keyAlias 'hierro'
-            keyPassword 'hierro123'
+            keyPassword System.getenv('HIERRO_KEYSTORE_PASSWORD') ?: ''
         }
     }
 
     buildTypes {
         release {
             minifyEnabled false
-            signingConfig signingConfigs.hierro
-        }
-        debug {
             signingConfig signingConfigs.hierro
         }
     }

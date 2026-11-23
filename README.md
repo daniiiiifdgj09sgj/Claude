@@ -17,4 +17,11 @@ Las versiones nuevas se instalan encima de la anterior y conservan tus datos. **
 - `app/src/main/assets/index.html`: la app completa (HTML, CSS y JavaScript en un archivo).
 - `app/src/main/java/com/hierro/app/MainActivity.java`: el contenedor Android (WebView, botón atrás y pantalla encendida durante el entreno).
 - `.github/workflows/apk.yml`: compilación automática.
-- `keystore/hierro.keystore`: clave de firma fija para que las actualizaciones se instalen encima. Es una clave de uso personal; el repo es público, así que no la uses para publicar en Google Play.
+- `app/src/main/assets/fonts/`: fuentes incluidas (licencia SIL OFL), para no depender de internet.
+
+## Seguridad
+
+- La app **no tiene permiso de internet**: no puede enviar ni recibir nada. El CI falla si alguien lo añade o si la página carga direcciones externas.
+- El WebView solo abre y carga sus propios archivos; cualquier otra dirección se bloquea.
+- La clave de firma **no está en el repo**: se guarda en los secretos `HIERRO_KEYSTORE` y `HIERRO_KEYSTORE_PASSWORD` de GitHub Actions.
+- Instala solo APKs descargados de las Releases de este repo.
