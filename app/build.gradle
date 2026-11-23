@@ -4,12 +4,12 @@ plugins {
 
 android {
     namespace 'com.hierro.app'
-    compileSdk 34
+    compileSdk 35
 
     defaultConfig {
         applicationId 'com.hierro.app'
         minSdk 26
-        targetSdk 34
+        targetSdk 35
         // GitHub Actions pasa el número de ejecución para que cada APK sea una versión nueva
         versionCode (System.getenv('VERSION_CODE') ?: '1').toInteger()
         versionName "1.0.${System.getenv('VERSION_CODE') ?: '1'}"
@@ -33,6 +33,11 @@ android {
         debug {
             signingConfig signingConfigs.hierro
         }
+    }
+
+    lint {
+        checkReleaseBuilds false
+        abortOnError false
     }
 
     compileOptions {

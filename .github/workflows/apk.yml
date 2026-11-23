@@ -19,21 +19,29 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      # El runner de GitHub ya trae el SDK de Android: solo nos aseguramos de tener la plataforma 34
+      # El runner de GitHub ya trae el SDK de Android: solo nos aseguramos de tener la plataforma 35
       - name: SDK de Android
         run: |
           echo "sdk.dir=$ANDROID_HOME" > local.properties
           yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null || true
-          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-34" "build-tools;34.0.0" > /dev/null
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-35" "build-tools;35.0.0" > /dev/null
 
       - uses: gradle/actions/setup-gradle@v4
         with:
-          gradle-version: '8.7'
+          gradle-version: '8.9'
 
       - name: Compilar
         env:
           VERSION_CODE: ${{ github.run_number }}
-        run: gradle assembleRelease --no-daemon
+        run: |
+          set -o pipefail
+          gradle assembleRelease --no-daemon --stacktrace 2>&1 | tee build.log
+
+      # Si falla, saca los errores como anotaciones (visibles sin iniciar sesión)
+      - name: Errores de compilación
+        if: failure()
+        run: |
+          grep -nE "error:|What went wrong|Could not|Execution failed|\.java:[0-9]+|Caused by|> " build.log | head -40 | while IFS= read -r l; do echo "::error::$l"; done
 
       - name: Renombrar APK
         run: cp app/build/outputs/apk/release/app-release.apk Hierro-v${{ github.run_number }}.apk
