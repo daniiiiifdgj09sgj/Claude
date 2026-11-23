@@ -41,7 +41,7 @@ jobs:
       - name: Errores de compilación
         if: failure()
         run: |
-          grep -nE "error:|What went wrong|Could not|Execution failed|\.java:[0-9]+|Caused by|> " build.log | head -40 | while IFS= read -r l; do echo "::error::$l"; done
+          grep -nE "Where:|build.gradle|error:|What went wrong|Could not|Execution failed|\.java:[0-9]+|Caused by|> " build.log | head -40 | while IFS= read -r l; do echo "::error::$l"; done
 
       - name: Renombrar APK
         run: cp app/build/outputs/apk/release/app-release.apk Hierro-v${{ github.run_number }}.apk
