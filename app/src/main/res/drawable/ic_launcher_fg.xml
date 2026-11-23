@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Icono: una barra con discos en ámbar sobre negro, con una franja de claqueta -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- franja de claqueta -->
+    <path android:fillColor="#1A1D22" android:pathData="M30,34h48v6h-48z" />
+    <path android:fillColor="#F2A541" android:pathData="M34,34h6l-4,6h-6z M46,34h6l-4,6h-6z M58,34h6l-4,6h-6z M70,34h6l-4,6h-6z" />
+    <!-- barra -->
+    <path android:fillColor="#EDE7DB" android:pathData="M28,56h52v4h-52z" />
+    <!-- discos -->
+    <path android:fillColor="#F2A541" android:pathData="M34,46h6v24h-6z M68,46h6v24h-6z" />
+    <path android:fillColor="#F2A541" android:pathData="M41,49h4v18h-4z M63,49h4v18h-4z" />
+</vector>

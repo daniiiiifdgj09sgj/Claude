@@ -1,0 +1,42 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.hierro.app'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId 'com.hierro.app'
+        minSdk 26
+        targetSdk 34
+        // GitHub Actions pasa el número de ejecución para que cada APK sea una versión nueva
+        versionCode (System.getenv('VERSION_CODE') ?: '1').toInteger()
+        versionName "1.0.${System.getenv('VERSION_CODE') ?: '1'}"
+    }
+
+    signingConfigs {
+        // Clave fija: así cada APK nuevo se instala encima del anterior sin borrar tus datos
+        hierro {
+            storeFile rootProject.file('keystore/hierro.keystore')
+            storePassword 'hierro123'
+            keyAlias 'hierro'
+            keyPassword 'hierro123'
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            signingConfig signingConfigs.hierro
+        }
+        debug {
+            signingConfig signingConfigs.hierro
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
