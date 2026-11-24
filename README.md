@@ -4,10 +4,10 @@ Diario de entreno para Android: rutina de 4 días con prioridad en torso, regist
 
 ## Descargar el APK
 
-Cada vez que se sube un cambio a `main`, GitHub Actions compila la app y la publica en **Releases**. Desde el móvil:
+La versión instalable está en la carpeta [`apk/`](apk/). Desde el móvil:
 
-1. Abre la pestaña **Releases** del repo y entra en la última versión.
-2. Descarga `Hierro-vN.apk` y ábrelo.
+1. Abre `apk/Hierro.apk` y pulsa **Download raw file** (o el icono de descarga).
+2. Ábrelo desde Descargas.
 3. Si Android lo pide, permite instalar apps de esa fuente (el navegador o Archivos).
 
 Las versiones nuevas se instalan encima de la anterior y conservan tus datos. **Si desinstalas la app, se borran los entrenos guardados.**
@@ -23,5 +23,5 @@ Las versiones nuevas se instalan encima de la anterior y conservan tus datos. **
 
 - La app **no tiene permiso de internet**: no puede enviar ni recibir nada. El CI falla si alguien lo añade o si la página carga direcciones externas.
 - El WebView solo abre y carga sus propios archivos; cualquier otra dirección se bloquea.
-- La clave de firma **no está en el repo**: se guarda en los secretos `HIERRO_KEYSTORE` y `HIERRO_KEYSTORE_PASSWORD` de GitHub Actions.
-- Instala solo APKs descargados de las Releases de este repo.
+- La clave de firma **no está en el repo ni en GitHub**: GitHub compila el APK sin firmar (en Releases, marcado como *sin firmar*) y se firma fuera con APK Signature Scheme v2.
+- Instala solo el APK de la carpeta `apk/` de este repo.

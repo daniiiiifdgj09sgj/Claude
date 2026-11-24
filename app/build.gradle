@@ -16,21 +16,11 @@ android {
         versionName = "1.0." + vc
     }
 
-    signingConfigs {
-        // La clave NO está en el repo: GitHub Actions la crea desde el secreto HIERRO_KEYSTORE
-        hierro {
-            storeFile file(System.getenv('HIERRO_KEYSTORE_FILE') ?: 'no-existe.p12')
-            storeType 'pkcs12'
-            storePassword System.getenv('HIERRO_KEYSTORE_PASSWORD') ?: ''
-            keyAlias 'hierro'
-            keyPassword System.getenv('HIERRO_KEYSTORE_PASSWORD') ?: ''
-        }
-    }
+    // Sin firma aquí: GitHub compila el APK sin firmar y se firma fuera, con una clave que nunca sube al repo.
 
     buildTypes {
         release {
             minifyEnabled false
-            signingConfig signingConfigs.hierro
         }
     }
 

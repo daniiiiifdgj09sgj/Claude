@@ -3,6 +3,8 @@ name: Compilar APK de Hierro
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - 'apk/**'
   workflow_dispatch:
 
 permissions:
@@ -36,22 +38,12 @@ jobs:
           if grep -nE "https?://" app/src/main/assets/index.html; then echo "::error::index.html contiene direcciones de internet"; exit 1; fi
           if grep -n "android.permission.INTERNET" app/src/main/AndroidManifest.xml; then echo "::error::El manifiesto pide permiso de internet"; exit 1; fi
 
-      - name: Preparar clave de firma
-        env:
-          KS: ${{ secrets.HIERRO_KEYSTORE }}
-        run: |
-          if [ -z "$KS" ]; then echo "::error::Falta el secreto HIERRO_KEYSTORE (ver Hierro-clave-de-firma.txt)"; exit 1; fi
-          echo "$KS" | base64 -d > "$RUNNER_TEMP/hierro.p12"
-
       - name: Compilar
         env:
           VERSION_CODE: ${{ github.run_number }}
-          HIERRO_KEYSTORE_FILE: ${{ runner.temp }}/hierro.p12
-          HIERRO_KEYSTORE_PASSWORD: ${{ secrets.HIERRO_KEYSTORE_PASSWORD }}
         run: |
           set -o pipefail
           gradle assembleRelease --no-daemon --stacktrace 2>&1 | tee build.log
-          rm -f "$RUNNER_TEMP/hierro.p12"
 
       # Si falla, saca los errores como anotaciones (visibles sin iniciar sesión)
       - name: Errores de compilación
@@ -60,20 +52,15 @@ jobs:
           grep -nE "Where:|build.gradle|error:|What went wrong|Could not|Execution failed|\.java:[0-9]+|Caused by|> " build.log | head -40 | while IFS= read -r l; do echo "::error::$l"; done
 
       - name: Renombrar APK
-        run: cp app/build/outputs/apk/release/app-release.apk Hierro-v${{ github.run_number }}.apk
+        run: cp app/build/outputs/apk/release/app-release-unsigned.apk Hierro-v${{ github.run_number }}-sin-firmar.apk
 
-      - uses: actions/upload-artifact@v4
-        with:
-          name: Hierro-v${{ github.run_number }}
-          path: Hierro-v${{ github.run_number }}.apk
-
-      - name: Publicar en Releases
+      - name: Publicar compilación sin firmar
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v${{ github.run_number }}
-          name: Hierro v${{ github.run_number }}
+          tag_name: build-${{ github.run_number }}
+          name: Compilación ${{ github.run_number }} (sin firmar)
+          prerelease: true
           body: |
-            Descarga **Hierro-v${{ github.run_number }}.apk** desde el móvil e instálalo.
-            Se instala encima de la versión anterior sin borrar tus entrenos.
-            Sin permiso de internet: la app no se conecta a nada.
-          files: Hierro-v${{ github.run_number }}.apk
+            APK **sin firmar**: Android no lo instala.
+            La versión instalable y firmada está en la carpeta `apk/` del repo.
+          files: Hierro-v${{ github.run_number }}-sin-firmar.apk
